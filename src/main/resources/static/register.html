@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Register - Attendance Portal</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 500px;
+        }
+        h2 { color: #333; margin-bottom: 25px; text-align: center; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; color: #555; font-weight: bold; }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        input:focus, select:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn:hover { background: #5568d3; }
+        .btn-student { background: #11998e; }
+        .btn-student:hover { background: #0d7a70; }
+        .tabs { display: flex; margin-bottom: 20px; }
+        .tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            background: #f0f0f0;
+            border: 2px solid #ddd;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .tab:first-child { border-radius: 5px 0 0 5px; }
+        .tab:last-child { border-radius: 0 5px 5px 0; }
+        .tab.active-staff { background: #667eea; color: white; border-color: #667eea; }
+        .tab.active-student { background: #11998e; color: white; border-color: #11998e; }
+        .form-section { display: none; }
+        .form-section.active { display: block; }
+        .back { text-align: center; margin-top: 15px; }
+        .back a { color: #667eea; text-decoration: none; }
+        .back a:hover { text-decoration: underline; }
+        .error-msg {
+            background: #fee;
+            color: #c33;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border-left: 4px solid #c33;
+            display: none;
+        }
+        .success-msg {
+            background: #efe;
+            color: #3c3;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border-left: 4px solid #3c3;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>📝 Create New Account</h2>
+
+    <div id="errorMsg" class="error-msg">Username already exists! Please choose another.</div>
+    <div id="successMsg" class="success-msg">Registration successful! Please login.</div>
+
+    <div class="tabs">
+        <div class="tab active-staff" id="staffTab" onclick="showForm('staff')">👨‍💼 Staff</div>
+        <div class="tab" id="studentTab" onclick="showForm('student')">🎓 Student</div>
+    </div>
+
+    <!-- Staff Registration -->
+    <div id="staffForm" class="form-section active">
+        <form action="/register-staff" method="POST">
+            <div class="form-group">
+                <label>Username:</label>
+                <input type="text" name="username" required placeholder="Choose a username">
+            </div>
+            <div class="form-group">
+                <label>Password:</label>
+                <input type="password" name="password" required placeholder="Choose a password">
+            </div>
+            <div class="form-group">
+                <label>Full Name:</label>
+                <input type="text" name="name" required placeholder="Enter your full name">
+            </div>
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" name="email" required placeholder="Enter your email">
+            </div>
+            <div class="form-group">
+                <label>Department:</label>
+                <input type="text" name="department" required placeholder="Enter department">
+            </div>
+            <button type="submit" class="btn">Register as Staff</button>
+        </form>
+    </div>
+
+    <!-- Student Registration -->
+    <div id="studentForm" class="form-section">
+        <form action="/register-student" method="POST">
+            <div class="form-group">
+                <label>Username:</label>
+                <input type="text" name="username" required placeholder="Choose a username">
+            </div>
+            <div class="form-group">
+                <label>Password:</label>
+                <input type="password" name="password" required placeholder="Choose a password">
+            </div>
+            <div class="form-group">
+                <label>Full Name:</label>
+                <input type="text" name="name" required placeholder="Enter your full name">
+            </div>
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" name="email" required placeholder="Enter your email">
+            </div>
+            <div class="form-group">
+                <label>Department:</label>
+                <input type="text" name="department" required placeholder="Enter department">
+            </div>
+            <div class="form-group">
+                <label>Year:</label>
+                <input type="text" name="year" required placeholder="e.g., 2nd Year">
+            </div>
+            <div class="form-group">
+                <label>Section:</label>
+                <input type="text" name="section" required placeholder="e.g., A">
+            </div>
+            <button type="submit" class="btn btn-student">Register as Student</button>
+        </form>
+    </div>
+
+    <div class="back"><a href="index.html">← Back to Home</a></div>
+</div>
+
+<script>
+    function showForm(type) {
+        document.getElementById('staffTab').className = 'tab' + (type === 'staff' ? ' active-staff' : '');
+        document.getElementById('studentTab').className = 'tab' + (type === 'student' ? ' active-student' : '');
+        document.getElementById('staffForm').className = 'form-section' + (type === 'staff' ? ' active' : '');
+        document.getElementById('studentForm').className = 'form-section' + (type === 'student' ? ' active' : '');
+    }
+
+    // Check URL for error/success messages
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('error') === 'username_exists') {
+        document.getElementById('errorMsg').style.display = 'block';
+    }
+    if (urlParams.get('registered') === 'true') {
+        document.getElementById('successMsg').style.display = 'block';
+    }
+</script>
+</body>
+</html>

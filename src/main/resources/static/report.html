@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Report</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="dashboard">
+    <nav class="navbar">
+        <h2> AMS - Attendance Report</h2>
+        <div class="nav-links">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/attendance">Mark Attendance</a>
+            <a href="/students">Students</a>
+            <a href="/report">Report</a>
+            <a href="/login-logs">Login Logs</a>
+            <a href="/leave-management">Leave</a>
+            <a href="/announcements">Announcements</a>
+            <a href="/notifications">Notifications</a>
+            <a href="/profile">Profile</a>
+            <a href="/logout" class="btn-logout">Logout</a>
+        </div>
+    </nav>
+    <div class="content">
+        <h1>Attendance Report</h1>
+        <button onclick="window.print()" class="btn btn-staff">🖨️ Print / Download Report</button>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Student Name</th>
+                <th>Username</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Subject</th>
+                <th>Remarks</th>
+                <th>Posted By</th>
+            </tr>
+            </thead>
+            <tbody id="reportTableBody">
+            <tr><td colspan="8" style="text-align:center;color:#999;">Loading...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    fetch('/api/check-session')
+        .then(res => res.json())
+        .then(data => {
+            if (!data.loggedIn || data.role !== 'staff') {
+                window.location.href = '/staff-login';
+            }
+        });
+
+    function statusClass(status) {
+        if (status === 'Present') return 'status-present';
+        if (status === 'Absent') return 'status-absent';
+        return 'status-late';
+    }
+
+    fetch('/api/attendance/all')
+        .then(res => res.json())
+        .then(attendances => {
+            const tbody = document.getElementById('reportTableBody');
+            if (!attendances.length) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#999;">No attendance records yet.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = attendances.map(a => `
+                <tr>
+                    <td>${a.id}</td>
+                    <td>${a.studentName || ''}</td>
+                    <td>${a.studentUsername || ''}</td>
+                    <td>${a.date}</td>
+                    <td><span class="${statusClass(a.status)}">${a.status}</span></td>
+                    <td>${a.subject || ''}</td>
+                    <td>${a.remarks || ''}</td>
+                    <td>${a.postedBy || ''}</td>
+                </tr>
+            `).join('');
+        });
+</script>
+</body>
+</html>

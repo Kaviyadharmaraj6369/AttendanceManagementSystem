@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Management System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .portal-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            max-width: 900px;
+            width: 100%;
+            animation: slideIn 0.5s ease-out;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .portal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 50px 40px;
+            text-align: center;
+        }
+        .portal-header h1 { font-size: 2.5em; margin-bottom: 10px; font-weight: 600; }
+        .portal-header p { font-size: 1.1em; opacity: 0.9; }
+        .portal-body { padding: 50px; }
+        .login-options { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px; }
+        .login-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 3px solid transparent;
+        }
+        .login-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            border-color: #667eea;
+        }
+        .login-card.staff { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .login-card.student { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; }
+        .login-card .icon { font-size: 4em; margin-bottom: 20px; display: block; }
+        .login-card h2 { font-size: 1.8em; margin-bottom: 10px; }
+        .login-card p { font-size: 0.95em; opacity: 0.9; margin-bottom: 20px; }
+        .login-card .btn {
+            display: inline-block;
+            background: white;
+            color: #667eea;
+            padding: 12px 35px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .login-card.student .btn { color: #11998e; }
+        .login-card .btn:hover { transform: scale(1.05); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .features { margin-top: 40px; padding-top: 30px; border-top: 2px solid #e0e0e0; }
+        .features h3 { text-align: center; color: #333; margin-bottom: 25px; font-size: 1.5em; }
+        .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .feature-item { text-align: center; padding: 15px; }
+        .feature-item .icon { font-size: 2em; color: #667eea; margin-bottom: 10px; }
+        .feature-item h4 { color: #333; margin-bottom: 5px; font-size: 1em; }
+        .feature-item p { color: #666; font-size: 0.85em; }
+        @media (max-width: 768px) {
+            .login-options { grid-template-columns: 1fr; }
+            .feature-grid { grid-template-columns: 1fr; }
+            .portal-body { padding: 30px 20px; }
+        }
+    </style>
+</head>
+<body>
+<div class="portal-container">
+    <div class="portal-header">
+        <h1>📋 Attendance Portal</h1>
+        <p>Welcome to the Attendance Management System</p>
+    </div>
+    <div class="portal-body">
+        <div class="login-options">
+            <div class="login-card staff">
+                <span class="icon">‍💼</span>
+                <h2>Staff Login</h2>
+                <p>Access attendance management, reports, and student records</p>
+                <a href="/staff-login" class="btn">Login as Staff</a>
+            </div>
+            <div class="login-card student">
+                <span class="icon">🎓</span>
+                <h2>Student Login</h2>
+                <p>View your attendance records and download reports</p>
+                <a href="/student-login" class="btn">Login as Student</a>
+            </div>
+        </div>
+        <div class="features">
+            <h3>⭐ System Features</h3>
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <div class="icon">✓</div>
+                    <h4>Daily Attendance</h4>
+                    <p>Mark and track attendance</p>
+                </div>
+                <div class="feature-item">
+                    <div class="icon">📊</div>
+                    <h4>Detailed Reports</h4>
+                    <p>Generate comprehensive reports</p>
+                </div>
+                <div class="feature-item">
+                    <div class="icon">🔒</div>
+                    <h4>Secure Login</h4>
+                    <p>Protected user authentication</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

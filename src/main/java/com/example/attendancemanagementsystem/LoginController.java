@@ -1,0 +1,161 @@
+package com.example.attendancemanagementsystem;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import java.time.LocalDateTime;
+
+@Controller
+public class LoginController {
+
+    @Autowired
+    private StaffRepository staffRepository;
+
+    @Autowired
+    private StudentRepository studentRepository;
+
+    @Autowired
+    private LoginLogRepository loginLogRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @GetMapping("/")
+    public String index() {
+        return "forward:/index.html";
+    }
+
+    @GetMapping("/staff-login")
+    public String staffLoginPage() {
+        return "forward:/staff-login.html";
+    }
+
+    @GetMapping("/student-login")
+    public String studentLoginPage() {
+        return "forward:/student-login.html";
+    }
+
+    @PostMapping("/staff-login")
+    public String processStaffLogin(@RequestParam String username,
+                                    @RequestParam String password,
+                                    HttpSession session,
+                                    HttpServletRequest request) {
+        try {
+            Staff staff = staffRepository.findByUsername(username).orElse(null);
+
+            if (staff != null && passwordEncoder.matches(password, staff.getPassword())) {
+                session.setAttribute("staffUsername", username);
+                session.setAttribute("staffName", staff.getName());
+                session.setAttribute("role", "staff");
+
+                LoginLog log = new LoginLog();
+                log.setUsername(username);
+                log.setRole("staff");
+                log.setLoginTime(LocalDateTime.now());
+                log.setIpAddress(request.getRemoteAddr());
+                loginLogRepository.save(log);
+
+                return "redirect:/dashboard";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "redirect:/staff-login?error=true";
+    }
+
+    @PostMapping("/student-login")
+    public String processStudentLogin(@RequestParam String username,
+                                      @RequestParam String password,
+                                      HttpSession session) {
+        try {
+            Student student = studentRepository.findByUsername(username).orElse(null);
+
+            if (student != null && passwordEncoder.matches(password, student.getPassword())) {
+                session.setAttribute("studentUsername", username);
+                session.setAttribute("studentName", student.getName());
+                session.setAttribute("role", "student");
+
+                LoginLog log = new LoginLog();
+                log.setUsername(username);
+                log.setRole("student");
+                log.setLoginTime(LocalDateTime.now());
+                loginLogRepository.save(log);
+
+                return "redirect:/student-dashboard";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "redirect:/student-login?error=true";
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/";
+    }
+
+    @GetMapping("/register")
+    public String registerPage() {
+        return "forward:/register.html";
+    }
+
+    @PostMapping("/register-staff")
+    public String registerStaff(@RequestParam String username,
+                                @RequestParam String password,
+                                @RequestParam String name,
+                                @RequestParam String email,
+                                @RequestParam String department) {
+        try {
+            if (staffRepository.findByUsername(username).isPresent()) {
+                return "redirect:/register?error=username_exists";
+            }
+
+            Staff staff = new Staff();
+            staff.setUsername(username);
+            staff.setPassword(passwordEncoder.encode(password));
+            staff.setName(name);
+            staff.setEmail(email);
+            staff.setDepartment(department);
+            staffRepository.save(staff);
+
+            return "redirect:/staff-login?registered=true";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "redirect:/register?error=system";
+        }
+    }
+
+    @PostMapping("/register-student")
+    public String registerStudent(@RequestParam String username,
+                                  @RequestParam String password,
+                                  @RequestParam String name,
+                                  @RequestParam String email,
+                                  @RequestParam String department,
+                                  @RequestParam String year,
+                                  @RequestParam String section) {
+        try {
+            if (studentRepository.findByUsername(username).isPresent()) {
+                return "redirect:/register?error=username_exists";
+            }
+
+            Student student = new Student();
+            student.setUsername(username);
+            student.setPassword(passwordEncoder.encode(password));
+            student.setName(name);
+            student.setEmail(email);
+            student.setDepartment(department);
+            student.setYear(year);
+            student.setSection(section);
+            studentRepository.save(student);
+
+            return "redirect:/student-login?registered=true";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "redirect:/register?error=system";
+        }
+    }
+}

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leave Management - AMS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; }
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav-links { display: flex; gap: 15px; flex-wrap: wrap; }
+        .nav-links a { color: white; text-decoration: none; padding: 8px 15px; border-radius: 5px; }
+        .nav-links a:hover { background: rgba(255,255,255,0.2); }
+        .content { padding: 30px; max-width: 1200px; margin: 0 auto; }
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        table th, table td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        table th { background: #f8f9fa; color: #2c3e50; }
+        .status-pending { background: #fff3cd; color: #856404; padding: 4px 12px; border-radius: 20px; font-size: 0.85em; }
+        .status-approved { background: #d4edda; color: #155724; padding: 4px 12px; border-radius: 20px; font-size: 0.85em; }
+        .status-rejected { background: #f8d7da; color: #721c24; padding: 4px 12px; border-radius: 20px; font-size: 0.85em; }
+        .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; color: white; margin-right: 5px; }
+        .btn-approve { background: #27ae60; }
+        .btn-approve:hover { background: #219150; }
+        .btn-reject { background: #e74c3c; }
+        .btn-reject:hover { background: #c0392b; }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <h2><i class="fas fa-envelope-open-text"></i> Leave Management</h2>
+    <div class="nav-links">
+        <a href="/dashboard">🏠 Dashboard</a>
+        <a href="/attendance">✅ Attendance</a>
+        <a href="/students">👥 Students</a>
+        <a href="/report"> Report</a>
+        <a href="/login-logs">📜 Logs</a>
+        <a href="/leave-management">📝 Leave</a>
+        <a href="/announcements">📢 Announcements</a>
+        <a href="/notifications">🔔 Notifications</a>
+        <a href="/logout">🚪 Logout</a>
+    </div>
+</nav>
+<div class="content">
+    <div class="card">
+        <h3>Student Leave Applications</h3>
+        <table>
+            <thead>
+            <tr>
+                <th>Student</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Reason</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody id="leaveTableBody">
+            <tr><td colspan="6" style="text-align:center;color:#999;">Loading...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    fetch('/api/check-session')
+        .then(res => res.json())
+        .then(data => {
+            if (!data.loggedIn || data.role !== 'staff') {
+                window.location.href = '/staff-login';
+            }
+        });
+
+    function loadLeaves() {
+        fetch('/api/leave/all')
+            .then(res => res.json())
+            .then(leaves => {
+                const tbody = document.getElementById('leaveTableBody');
+                if (!leaves.length) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999;">No leave applications yet.</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = leaves.map(leave => `
+                    <tr>
+                        <td>${leave.studentName} (${leave.studentUsername})</td>
+                        <td>${leave.fromDate}</td>
+                        <td>${leave.toDate}</td>
+                        <td>${leave.reason}</td>
+                        <td><span class="status-${leave.status.toLowerCase()}">${leave.status}</span></td>
+                        <td>
+                            ${leave.status === 'Pending' ? `
+                                <button class="btn btn-approve" onclick="respond(${leave.id}, 'approve')">Approve</button>
+                                <button class="btn btn-reject" onclick="respond(${leave.id}, 'reject')">Reject</button>
+                            ` : (leave.staffResponse || '-')}
+                        </td>
+                    </tr>
+                `).join('');
+            });
+    }
+
+    function respond(id, action) {
+        fetch('/api/leave/' + id + '/' + action, { method: 'POST' })
+            .then(() => loadLeaves());
+    }
+
+    loadLeaves();
+</script>
+</body>
+</html>

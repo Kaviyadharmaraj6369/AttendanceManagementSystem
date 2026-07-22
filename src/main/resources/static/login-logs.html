@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Logs</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="dashboard">
+    <nav class="navbar">
+        <h2>📋 AMS - Login Logs</h2>
+        <div class="nav-links">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/attendance">Mark Attendance</a>
+            <a href="/students">Students</a>
+            <a href="/report">Report</a>
+            <a href="/login-logs">Login Logs</a>
+            <a href="/leave-management">Leave</a>
+            <a href="/announcements">Announcements</a>
+            <a href="/notifications">Notifications</a>
+            <a href="/profile">Profile</a>
+            <a href="/logout" class="btn-logout">Logout</a>
+        </div>
+    </nav>
+    <div class="content">
+        <h1>Login Logs</h1>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Role</th>
+                <th>Login Time</th>
+                <th>IP Address</th>
+            </tr>
+            </thead>
+            <tbody id="logsTableBody">
+            <tr><td colspan="5" style="text-align:center;color:#999;">Loading...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    fetch('/api/check-session')
+        .then(res => res.json())
+        .then(data => {
+            if (!data.loggedIn || data.role !== 'staff') {
+                window.location.href = '/staff-login';
+            }
+        });
+
+    fetch('/api/login-logs')
+        .then(res => res.json())
+        .then(logs => {
+            const tbody = document.getElementById('logsTableBody');
+            if (!logs.length) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#999;">No login logs yet.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = logs.map(log => `
+                <tr>
+                    <td>${log.id}</td>
+                    <td>${log.username}</td>
+                    <td>${log.role}</td>
+                    <td>${log.loginTime}</td>
+                    <td>${log.ipAddress || '-'}</td>
+                </tr>
+            `).join('');
+        });
+</script>
+</body>
+</html>

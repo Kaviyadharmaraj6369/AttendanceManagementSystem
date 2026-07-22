@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - AMS</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; }
+        .navbar {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav-links { display: flex; gap: 15px; }
+        .nav-links a { color: white; text-decoration: none; padding: 8px 15px; border-radius: 5px; }
+        .nav-links a:hover { background: rgba(255,255,255,0.2); }
+        .content { padding: 30px; max-width: 1400px; margin: 0 auto; }
+        .warning-banner {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .warning-banner.show { display: flex; align-items: center; gap: 15px; }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        .stat-card .icon { font-size: 2em; margin-bottom: 10px; }
+        .stat-card .stat-value { font-size: 2em; font-weight: 700; color: #2c3e50; }
+        .stat-card .stat-label { color: #666; font-size: 0.9em; }
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .card h3 { color: #2c3e50; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #f0f2f5; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        table th, table td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        table th { background: #f8f9fa; color: #2c3e50; }
+        .status-present { background: #27ae60; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.85em; }
+        .status-absent { background: #e74c3c; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.85em; }
+        .status-late { background: #f39c12; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.85em; }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-primary { background: #11998e; color: white; }
+        .btn-primary:hover { background: #0d7a70; }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <h2>📋 AMS - Student Dashboard</h2>
+    <div class="nav-links">
+        <a href="/student-dashboard">🏠 Dashboard</a>
+        <a href="/student-profile">👤 Profile</a>
+        <a href="/apply-leave">📝 Leave</a>
+        <a href="/announcements">📢 Announcements</a>
+        <a href="/notifications">🔔 Notifications</a>
+        <a href="/logout">🚪 Logout</a>
+    </div>
+</nav>
+<div class="content">
+    <div class="warning-banner" id="warningBanner">
+        <span style="font-size: 2em;">⚠️</span>
+        <div>
+            <strong>Low Attendance Warning!</strong>
+            <p>Your attendance is below 75%. Please attend classes regularly.</p>
+        </div>
+    </div>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="icon" style="color: #667eea;">📅</div>
+            <div class="stat-value" id="totalClasses">0</div>
+            <div class="stat-label">Total Classes</div>
+        </div>
+        <div class="stat-card">
+            <div class="icon" style="color: #27ae60;">✅</div>
+            <div class="stat-value" id="present">0</div>
+            <div class="stat-label">Present</div>
+        </div>
+        <div class="stat-card">
+            <div class="icon" style="color: #e74c3c;">❌</div>
+            <div class="stat-value" id="absent">0</div>
+            <div class="stat-label">Absent</div>
+        </div>
+        <div class="stat-card">
+            <div class="icon" style="color: #f39c12;">⏰</div>
+            <div class="stat-value" id="late">0</div>
+            <div class="stat-label">Late</div>
+        </div>
+        <div class="stat-card">
+            <div class="icon" style="color: #9b59b6;">📊</div>
+            <div class="stat-value"><span id="attendancePercentage">0</span>%</div>
+            <div class="stat-label">Attendance %</div>
+        </div>
+    </div>
+    <div class="card">
+        <h3> Recent Attendance Records</h3>
+        <button onclick="window.print()" class="btn btn-primary" style="margin-bottom: 15px;">📥 Download Report</button>
+        <table>
+            <thead>
+            <tr>
+                <th>Date</th>
+                <th>Subject</th>
+                <th>Status</th>
+                <th>Remarks</th>
+                <th>Posted By</th>
+            </tr>
+            </thead>
+            <tbody id="attendanceTable">
+            <tr><td colspan="5" style="text-align: center; color: #999;">Loading...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    fetch('/api/check-session')
+        .then(res => res.json())
+        .then(data => {
+            if (!data.loggedIn || data.role !== 'student') {
+                window.location.href = '/student-login';
+            }
+        });
+
+    fetch('/api/student/dashboard-stats')
+        .then(res => res.json())
+        .then(stats => {
+            document.getElementById('totalClasses').textContent = stats.totalClasses ?? 0;
+            document.getElementById('present').textContent = stats.present ?? 0;
+            document.getElementById('absent').textContent = stats.absent ?? 0;
+            document.getElementById('late').textContent = stats.late ?? 0;
+            document.getElementById('attendancePercentage').textContent = stats.attendancePercentage ?? 0;
+            if (stats.lowAttendance) {
+                document.getElementById('warningBanner').classList.add('show');
+            }
+        });
+
+    function statusClass(status) {
+        if (status === 'Present') return 'status-present';
+        if (status === 'Absent') return 'status-absent';
+        return 'status-late';
+    }
+
+    fetch('/api/attendance/my')
+        .then(res => res.json())
+        .then(attendances => {
+            const tbody = document.getElementById('attendanceTable');
+            if (!attendances.length) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#999;">No attendance records yet.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = attendances.map(a => `
+                <tr>
+                    <td>${a.date}</td>
+                    <td>${a.subject || ''}</td>
+                    <td><span class="${statusClass(a.status)}">${a.status}</span></td>
+                    <td>${a.remarks || ''}</td>
+                    <td>${a.postedBy || ''}</td>
+                </tr>
+            `).join('');
+        });
+</script>
+</body>
+</html>

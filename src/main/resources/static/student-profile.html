@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Profile</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="dashboard">
+    <nav class="navbar">
+        <h2>📋 AMS - Student Profile</h2>
+        <div class="nav-links">
+            <a href="/student-dashboard">Dashboard</a>
+            <a href="/student-profile">Profile</a>
+            <a href="/logout" class="btn-logout">Logout</a>
+        </div>
+    </nav>
+    <div class="content">
+        <h1>My Profile</h1>
+        <div class="profile-card" id="profileCard">
+            <p style="color:#999;">Loading...</p>
+        </div>
+    </div>
+</div>
+<script>
+    fetch('/api/check-session')
+        .then(res => res.json())
+        .then(data => {
+            if (!data.loggedIn || data.role !== 'student') {
+                window.location.href = '/student-login';
+            }
+        });
+
+    fetch('/api/profile')
+        .then(res => res.json())
+        .then(student => {
+            document.getElementById('profileCard').innerHTML = `
+                <p><strong>Name:</strong> <span>${student.name || ''}</span></p>
+                <p><strong>Username:</strong> <span>${student.username || ''}</span></p>
+                <p><strong>Email:</strong> <span>${student.email || ''}</span></p>
+                <p><strong>Phone:</strong> <span>${student.phone || ''}</span></p>
+                <p><strong>Department:</strong> <span>${student.department || ''}</span></p>
+                <p><strong>Year:</strong> <span>${student.year || ''}</span></p>
+                <p><strong>Section:</strong> <span>${student.section || ''}</span></p>
+            `;
+        });
+</script>
+</body>
+</html>

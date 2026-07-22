@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Notifications - AMS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; }
+
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-links { display: flex; gap: 15px; }
+        .nav-links a { color: white; text-decoration: none; padding: 8px 15px; border-radius: 5px; }
+        .nav-links a:hover { background: rgba(255,255,255,0.2); }
+
+        .content { padding: 30px; max-width: 900px; margin: 0 auto; }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .card h3 { color: #2c3e50; margin-bottom: 20px; }
+
+        .notification-item {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: background 0.3s;
+        }
+
+        .notification-item:hover { background: #f8f9fa; }
+        .notification-item.unread { background: #e8f4f8; border-left: 3px solid #667eea; }
+
+        .notification-item i { font-size: 1.5em; color: #667eea; }
+        .notification-item .content { flex: 1; }
+        .notification-item .message { color: #333; }
+        .notification-item .time { color: #999; font-size: 0.85em; margin-top: 3px; }
+
+        .empty-state { text-align: center; padding: 40px; color: #999; }
+        .empty-state i { font-size: 3em; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <h2><i class="fas fa-bell"></i> Notifications</h2>
+    <div class="nav-links">
+        <a id="dashboardLink" href="/dashboard">Dashboard</a>
+        <a href="/announcements">Announcements</a>
+        <a href="/notifications">Notifications</a>
+        <a href="/logout">Logout</a>
+    </div>
+</nav>
+
+<div class="content">
+    <div class="card">
+        <h3><i class="fas fa-bell"></i> Your Notifications</h3>
+        <div id="notificationList">
+            <div class="empty-state"><i class="fas fa-spinner"></i><p>Loading...</p></div>
+        </div>
+    </div>
+</div>
+<script>
+    fetch('/api/check-session')
+        .then(res => res.json())
+        .then(data => {
+            if (!data.loggedIn) {
+                window.location.href = '/';
+                return;
+            }
+            document.getElementById('dashboardLink').href = data.role === 'staff' ? '/dashboard' : '/student-dashboard';
+        });
+
+    function loadNotifications() {
+        fetch('/api/notifications')
+            .then(res => res.json())
+            .then(notifications => {
+                const list = document.getElementById('notificationList');
+                if (!notifications.length) {
+                    list.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-bell-slash"></i>
+                            <p>No notifications yet.</p>
+                        </div>`;
+                    return;
+                }
+                list.innerHTML = notifications.map(notif => `
+                    <div class="notification-item ${notif.read ? '' : 'unread'}">
+                        <i class="fas fa-bell"></i>
+                        <div class="content">
+                            <div class="message">${notif.message}</div>
+                            <div class="time">${notif.createdAt}</div>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Mark everything as read now that the user has seen it
+                fetch('/api/notifications/read-all', { method: 'POST' });
+            });
+    }
+
+    loadNotifications();
+</script>
+</body>
+</html>
