@@ -6,62 +6,88 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: radial-gradient(circle at 10% 10%, rgba(102,126,234,0.10) 0%, transparent 40%),
+            radial-gradient(circle at 90% 90%, rgba(56,239,125,0.10) 0%, transparent 40%),
+            #f4f5fb;
+        }
 
         .navbar {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 15px 30px;
+            padding: 16px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 4px 18px rgba(102,126,234,0.25);
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
-        .nav-links { display: flex; gap: 15px; }
-        .nav-links a { color: white; text-decoration: none; padding: 8px 15px; border-radius: 5px; }
-        .nav-links a:hover { background: rgba(255,255,255,0.2); }
+        .nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
+        .nav-links a { color: white; text-decoration: none; padding: 8px 15px; border-radius: 8px; transition: background 0.25s; }
+        .nav-links a:hover { background: rgba(255,255,255,0.18); }
 
         .content { padding: 30px; max-width: 900px; margin: 0 auto; }
 
         .card {
             background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
+            padding: 26px;
+            border-radius: 16px;
+            box-shadow: 0 10px 28px rgba(60,50,120,0.10);
+            margin-bottom: 22px;
         }
 
-        .card h3 { color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #f0f2f5; }
+        .card h3 { color: #2d3748; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid #f0f0f7; display: flex; align-items: center; gap: 8px; }
 
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; color: #555; }
+        .form-group { margin-bottom: 16px; position: relative; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: 600; color: #555; font-size: 0.92em; }
         .form-group input {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            padding: 12px 14px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
             font-size: 14px;
+            background: #fbfbfe;
+            transition: all 0.2s;
         }
-        .form-group input:focus { border-color: #667eea; outline: none; }
+        .form-group input:focus { border-color: #667eea; outline: none; box-shadow: 0 0 0 4px rgba(102,126,234,0.12); background: white; }
+        .form-group input.has-toggle { padding-right: 42px; }
+
+        .password-toggle {
+            position: absolute;
+            right: 8px;
+            top: 38px;
+            background: none;
+            border: none;
+            color: #a0aec0;
+            cursor: pointer;
+            padding: 6px;
+            display: flex;
+            border-radius: 6px;
+        }
+        .password-toggle:hover { color: #667eea; background: #eef0fd; }
 
         .btn {
-            padding: 12px 25px;
+            padding: 12px 26px;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
-            font-weight: 600;
-            background: #667eea;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            transition: all 0.25s;
         }
-        .btn:hover { background: #5568d3; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(102,126,234,0.35); }
 
         .alert {
             padding: 12px 15px;
-            border-radius: 8px;
+            border-radius: 10px;
             margin-bottom: 15px;
         }
-        .alert-success { background: #d4edda; color: #155724; border-left: 4px solid #27ae60; }
-        .alert-error { background: #f8d7da; color: #721c24; border-left: 4px solid #e74c3c; }
+        .alert-success { background: #dcfce7; color: #15803d; border-left: 4px solid #16a34a; }
+        .alert-error { background: #fee2e2; color: #b91c1c; border-left: 4px solid #dc2626; }
     </style>
 </head>
 <body>
@@ -103,11 +129,13 @@
         <form id="passwordForm">
             <div class="form-group">
                 <label>Current Password:</label>
-                <input type="password" name="oldPassword" required>
+                <input type="password" class="pwd-input has-toggle" name="oldPassword" required>
+                <button type="button" class="password-toggle pwd-toggle"></button>
             </div>
             <div class="form-group">
                 <label>New Password:</label>
-                <input type="password" name="newPassword" required minlength="4">
+                <input type="password" class="pwd-input has-toggle" name="newPassword" required minlength="4">
+                <button type="button" class="password-toggle pwd-toggle"></button>
             </div>
             <button type="submit" class="btn">
                 <i class="fas fa-key"></i> Change Password
@@ -116,6 +144,19 @@
     </div>
 </div>
 <script>
+    const EYE_OPEN = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+    const EYE_CLOSED = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.6 21.6 0 0 1 5.06-6.06M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 8 11 8a21.6 21.6 0 0 1-3.22 4.42M1 1l22 22"/></svg>';
+
+    document.querySelectorAll('.pwd-toggle').forEach(btn => {
+        btn.innerHTML = EYE_OPEN;
+        const input = btn.previousElementSibling;
+        btn.addEventListener('click', () => {
+            const isPassword = input.getAttribute('type') === 'password';
+            input.setAttribute('type', isPassword ? 'text' : 'password');
+            btn.innerHTML = isPassword ? EYE_CLOSED : EYE_OPEN;
+        });
+    });
+
     function showAlert(message, success) {
         const box = document.getElementById('alertBox');
         box.textContent = message;

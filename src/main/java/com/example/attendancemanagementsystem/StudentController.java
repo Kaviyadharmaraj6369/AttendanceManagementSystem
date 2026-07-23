@@ -1,7 +1,6 @@
 package com.example.attendancemanagementsystem;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpSession;
@@ -18,9 +17,6 @@ public class StudentController {
 
     @Autowired
     private AttendanceRepository attendanceRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     // ---------- Page routes (just serve the static shell; data is loaded by JS via the /api endpoints below) ----------
 
@@ -100,7 +96,7 @@ public class StudentController {
                              @RequestParam String section) {
         Student student = new Student();
         student.setUsername(username);
-        student.setPassword(passwordEncoder.encode(password));
+        student.setPassword(PasswordUtil.encode(password));
         student.setName(name);
         student.setEmail(email);
         student.setPhone(phone);

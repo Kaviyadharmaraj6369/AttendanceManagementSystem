@@ -3,12 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Login - Attendance Portal</title>
+    <title>Student Portal - Attendance System</title>
     <style>
+        :root {
+            --primary: #11998e;
+            --secondary: #38ef7d;
+            --text: #2d3748;
+            --muted: #718096;
+            --border: #e2e8f0;
+            --bg: #f4fbf9;
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            background: radial-gradient(circle at 15% 20%, #38c9a5 0%, transparent 45%),
+            radial-gradient(circle at 85% 80%, #6fd97a 0%, transparent 45%),
+            linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -17,144 +27,327 @@
         }
         .login-container {
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            border-radius: 24px;
+            box-shadow: 0 25px 70px rgba(10, 70, 60, 0.3);
             overflow: hidden;
-            max-width: 450px;
+            max-width: 460px;
             width: 100%;
             animation: slideIn 0.5s ease-out;
         }
         @keyframes slideIn {
-            from { opacity: 0; transform: translateY(-30px); }
+            from { opacity: 0; transform: translateY(-24px); }
             to { opacity: 1; transform: translateY(0); }
         }
         .login-header {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
-            padding: 40px 30px;
+            padding: 38px 30px 30px;
             text-align: center;
+            position: relative;
         }
-        .login-header .icon { font-size: 3.5em; margin-bottom: 15px; display: block; }
-        .login-header h1 { font-size: 2em; margin-bottom: 8px; font-weight: 600; }
-        .login-header p { opacity: 0.9; font-size: 0.95em; }
-        .login-body { padding: 40px 30px; }
-        .error-message {
-            background: #fee;
-            color: #c33;
+        .login-header::after {
+            content: '';
+            position: absolute; left: 0; right: 0; bottom: -1px; height: 24px;
+            background: white;
+            border-radius: 24px 24px 0 0;
+        }
+        .login-header .icon {
+            font-size: 3em; margin-bottom: 10px; display: inline-flex; align-items: center; justify-content: center;
+            width: 72px; height: 72px; background: rgba(255,255,255,0.18); border-radius: 50%;
+        }
+        .login-header h1 { font-size: 1.7em; margin-top: 12px; font-weight: 700; letter-spacing: 0.3px; }
+        .login-header p { opacity: 0.9; font-size: 0.9em; margin-top: 4px; }
+        .login-body { padding: 10px 30px 34px; }
+
+        .tab-switch {
+            display: flex;
+            background: var(--bg);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 22px;
+            position: relative;
+        }
+        .tab-switch button {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 11px 0;
+            font-weight: 700;
+            font-size: 0.95em;
+            color: var(--muted);
+            cursor: pointer;
+            border-radius: 9px;
+            z-index: 1;
+            transition: color 0.25s;
+        }
+        .tab-switch button.active { color: white; }
+        .tab-switch .slider {
+            position: absolute;
+            top: 4px; bottom: 4px; left: 4px;
+            width: calc(50% - 4px);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 9px;
+            transition: transform 0.25s ease;
+            box-shadow: 0 4px 12px rgba(17,153,142,0.35);
+        }
+        .tab-switch .slider.to-register { transform: translateX(100%); }
+
+        .panel { display: none; animation: fadeIn 0.3s ease; }
+        .panel.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px);} to { opacity: 1; transform: translateY(0);} }
+
+        .message {
             padding: 12px 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border-left: 4px solid #c33;
+            border-radius: 10px;
+            margin-bottom: 18px;
+            font-size: 0.92em;
             display: none;
         }
-        .error-message.show { display: block; }
-        .success-message {
-            background: #efe;
-            color: #3c3;
-            padding: 12px 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border-left: 4px solid #3c3;
-            display: none;
-        }
-        .success-message.show { display: block; }
-        .form-group { margin-bottom: 25px; position: relative; }
-        .form-group label { display: block; margin-bottom: 8px; color: #333; font-weight: 600; font-size: 0.95em; }
+        .message.show { display: block; }
+        .message.error { background: #fee2e2; color: #b91c1c; border-left: 4px solid #dc2626; }
+        .message.success { background: #dcfce7; color: #15803d; border-left: 4px solid #16a34a; }
+        .message.info { background: #e6fbf5; color: #0f766e; border-left: 4px solid #14b8a6; }
+
+        .form-group { margin-bottom: 18px; position: relative; }
+        .form-group label { display: block; margin-bottom: 7px; color: var(--text); font-weight: 600; font-size: 0.9em; }
         .input-wrapper { position: relative; }
-        .input-wrapper .icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #999; font-size: 1.1em; }
+        .input-wrapper .field-icon {
+            position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+            color: var(--primary); display: flex;
+        }
         .form-group input {
             width: 100%;
-            padding: 14px 15px 14px 45px;
-            border: 2px solid #e0e0e0;
+            padding: 13px 14px 13px 42px;
+            border: 1.5px solid var(--border);
             border-radius: 10px;
-            font-size: 1em;
-            transition: all 0.3s;
+            font-size: 0.98em;
+            background: #fbfefd;
+            transition: all 0.2s;
         }
-        .form-group input:focus { border-color: #11998e; outline: none; box-shadow: 0 0 0 3px rgba(17, 153, 142, 0.1); }
+        .form-group input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 4px rgba(17, 153, 142, 0.12); background: white; }
         .password-toggle {
             position: absolute;
-            right: 15px;
+            right: 10px;
             top: 50%;
             transform: translateY(-50%);
             background: none;
             border: none;
-            color: #999;
+            color: #a0aec0;
             cursor: pointer;
-            font-size: 1.1em;
-            padding: 5px;
+            padding: 6px;
+            display: flex;
+            border-radius: 6px;
         }
-        .btn-login {
+        .password-toggle:hover { color: var(--primary); background: #e8fdf7; }
+
+        .btn-submit {
             width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
             border: none;
             border-radius: 10px;
-            font-size: 1.1em;
-            font-weight: 600;
+            font-size: 1.02em;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 10px;
+            transition: all 0.25s;
+            margin-top: 6px;
+            letter-spacing: 0.2px;
         }
-        .btn-login:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(17, 153, 142, 0.4); }
-        .back-link { text-align: center; margin-top: 20px; }
-        .back-link a { color: #11998e; text-decoration: none; font-weight: 500; }
-        .back-link a:hover { text-decoration: underline; }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 12px 26px rgba(17, 153, 142, 0.4); }
+        .btn-submit:active { transform: translateY(0); }
+
+        .back-link { text-align: center; margin-top: 18px; }
+        .back-link a { color: var(--muted); text-decoration: none; font-weight: 500; font-size: 0.9em; }
+        .back-link a:hover { color: var(--primary); }
+
         .demo-credentials {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 25px;
+            background: var(--bg);
+            padding: 13px 15px;
+            border-radius: 10px;
+            margin-top: 20px;
             text-align: center;
-            border-left: 4px solid #11998e;
+            border: 1px dashed var(--border);
         }
-        .demo-credentials p { color: #666; font-size: 0.9em; margin-bottom: 5px; }
-        .demo-credentials strong { color: #11998e; font-size: 1em; }
+        .demo-credentials p { color: var(--muted); font-size: 0.85em; margin-bottom: 4px; }
+        .demo-credentials strong { color: var(--primary); font-size: 0.95em; }
+
+        .role-switch { text-align: center; margin-top: 4px; font-size: 0.85em; color: var(--muted); }
+        .role-switch a { color: #667eea; font-weight: 700; text-decoration: none; }
+        .role-switch a:hover { text-decoration: underline; }
+
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     </style>
 </head>
 <body>
 <div class="login-container">
     <div class="login-header">
         <span class="icon">🎓</span>
-        <h1>Student Login</h1>
-        <p>Access your attendance records</p>
+        <h1>Student Portal</h1>
+        <p>Track attendance & apply for leave</p>
     </div>
     <div class="login-body">
-        <div class="error-message" id="errorMsg">❌ Invalid username or password!</div>
-        <div class="success-message" id="successMsg">✅ Registration successful! Please login.</div>
-        <form id="loginForm" action="/student-login" method="POST">
-            <div class="form-group">
-                <label>Username</label>
-                <div class="input-wrapper">
-                    <span class="icon">👤</span>
-                    <input type="text" id="username" name="username" placeholder="Enter your username" required>
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <div class="input-wrapper">
-                    <span class="icon">🔒</span>
-                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
-                    <button type="button" class="password-toggle" id="togglePassword">👁️</button>
-                </div>
-            </div>
-            <button type="submit" class="btn-login"> Login to Dashboard</button>
-        </form>
+        <div class="tab-switch">
+            <div class="slider" id="tabSlider"></div>
+            <button type="button" id="loginTabBtn" class="active" onclick="showTab('login')">Login</button>
+            <button type="button" id="registerTabBtn" onclick="showTab('register')">Register</button>
+        </div>
 
+        <div class="message error" id="errorMsg"></div>
+        <div class="message success" id="successMsg"></div>
+        <div class="message info" id="infoMsg"></div>
+
+        <!-- LOGIN PANEL -->
+        <div class="panel active" id="loginPanel">
+            <form action="/student-login" method="POST">
+                <div class="form-group">
+                    <label>Username</label>
+                    <div class="input-wrapper">
+                        <span class="field-icon">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        </span>
+                        <input type="text" name="username" placeholder="Enter your username" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <div class="input-wrapper">
+                        <span class="field-icon">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        </span>
+                        <input type="password" class="pwd-input" name="password" placeholder="Enter your password" required>
+                        <button type="button" class="password-toggle pwd-toggle"></button>
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit">Login to Dashboard</button>
+            </form>
+
+        </div>
+
+        <!-- REGISTER PANEL -->
+        <div class="panel" id="registerPanel">
+            <form action="/register-student" method="POST">
+                <div class="form-group">
+                    <label>Username</label>
+                    <div class="input-wrapper">
+                        <span class="field-icon">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        </span>
+                        <input type="text" name="username" placeholder="Choose a username" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <div class="input-wrapper">
+                        <span class="field-icon">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        </span>
+                        <input type="password" class="pwd-input" name="password" placeholder="Choose a password" required minlength="4">
+                        <button type="button" class="password-toggle pwd-toggle"></button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <div class="input-wrapper">
+                        <span class="field-icon">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        </span>
+                        <input type="text" name="name" placeholder="Enter your full name" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <div class="input-wrapper">
+                        <span class="field-icon">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 6 12 13 2 6"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
+                        </span>
+                        <input type="email" name="email" placeholder="Enter your email" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Department</label>
+                    <div class="input-wrapper">
+                        <span class="field-icon">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h1M9 13h1M14 9h1M14 13h1M9 21v-4h6v4"/></svg>
+                        </span>
+                        <input type="text" name="department" placeholder="Enter department" required>
+                    </div>
+                </div>
+                <div class="two-col">
+                    <div class="form-group">
+                        <label>Year</label>
+                        <input type="text" name="year" placeholder="e.g., 2nd Year" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Section</label>
+                        <input type="text" name="section" placeholder="e.g., A" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit">Create Student Account</button>
+            </form>
+        </div>
+
+        <div class="role-switch">Staff member? <a href="/staff-login">Go to Staff Portal</a></div>
         <div class="back-link"><a href="/">← Back to Home</a></div>
     </div>
 </div>
 <script>
-    const togglePassword = document.getElementById('togglePassword');
-    const passwordInput = document.getElementById('password');
-    togglePassword.addEventListener('click', function() {
-        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-        passwordInput.setAttribute('type', type);
-        this.textContent = type === 'text' ? '🙈' : '👁️';
+    const EYE_OPEN = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+    const EYE_CLOSED = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.6 21.6 0 0 1 5.06-6.06M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 8 11 8a21.6 21.6 0 0 1-3.22 4.42M1 1l22 22"/></svg>';
+
+    document.querySelectorAll('.pwd-toggle').forEach(btn => {
+        btn.innerHTML = EYE_OPEN;
+        const input = btn.parentElement.querySelector('.pwd-input');
+        btn.addEventListener('click', () => {
+            const isPassword = input.getAttribute('type') === 'password';
+            input.setAttribute('type', isPassword ? 'text' : 'password');
+            btn.innerHTML = isPassword ? EYE_CLOSED : EYE_OPEN;
+        });
     });
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('error') === 'true') document.getElementById('errorMsg').classList.add('show');
-    if (urlParams.get('registered') === 'true') document.getElementById('successMsg').classList.add('show');
+
+    function showTab(tab) {
+        const isRegister = tab === 'register';
+        document.getElementById('loginTabBtn').classList.toggle('active', !isRegister);
+        document.getElementById('registerTabBtn').classList.toggle('active', isRegister);
+        document.getElementById('loginPanel').classList.toggle('active', !isRegister);
+        document.getElementById('registerPanel').classList.toggle('active', isRegister);
+        document.getElementById('tabSlider').classList.toggle('to-register', isRegister);
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('tab') === 'register') showTab('register');
+
+    const error = params.get('error');
+    const errorBox = document.getElementById('errorMsg');
+    if (error === 'notfound') {
+        showTab('login');
+        errorBox.textContent = 'Invalid username! No account found — you can register below.';
+        errorBox.classList.add('show');
+    } else if (error === 'wrongpassword' || error === 'true') {
+        showTab('login');
+        errorBox.textContent = 'Invalid password! Please try again.';
+        errorBox.classList.add('show');
+    } else if (error === 'system') {
+        errorBox.textContent = 'Something went wrong. Please try again.';
+        errorBox.classList.add('show');
+    } else if (error === 'already_registered') {
+        showTab('login');
+        document.getElementById('infoMsg').textContent = "You're already registered! Please login below.";
+        document.getElementById('infoMsg').classList.add('show');
+    } else if (error === 'username_exists') {
+        errorBox.textContent = 'That username is already taken. Please choose another.';
+        errorBox.classList.add('show');
+    }
+
+    if (params.get('registered') === 'true') {
+        document.getElementById('successMsg').textContent = 'Registration successful! Please login below.';
+        document.getElementById('successMsg').classList.add('show');
+    }
+
+    if (params.get('notice') === 'notfound') {
+        document.getElementById('infoMsg').textContent = "We couldn't find that account — create one below.";
+        document.getElementById('infoMsg').classList.add('show');
+    }
 </script>
 </body>
 </html>

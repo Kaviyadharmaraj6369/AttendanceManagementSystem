@@ -1,7 +1,6 @@
 package com.example.attendancemanagementsystem;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpSession;
@@ -16,9 +15,6 @@ public class ProfileController {
 
     @Autowired
     private StudentRepository studentRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     // ---------- Page ----------
 
@@ -126,22 +122,22 @@ public class ProfileController {
         if ("staff".equals(role)) {
             String username = (String) session.getAttribute("staffUsername");
             Staff staff = staffRepository.findByUsername(username).orElse(null);
-            if (staff == null || !passwordEncoder.matches(oldPassword, staff.getPassword())) {
+            if (staff == null || !PasswordUtil.matches(oldPassword, staff.getPassword())) {
                 response.put("success", false);
                 response.put("message", "Current password is incorrect.");
                 return response;
             }
-            staff.setPassword(passwordEncoder.encode(newPassword));
+            staff.setPassword(PasswordUtil.encode(newPassword));
             staffRepository.save(staff);
         } else if ("student".equals(role)) {
             String username = (String) session.getAttribute("studentUsername");
             Student student = studentRepository.findByUsername(username).orElse(null);
-            if (student == null || !passwordEncoder.matches(oldPassword, student.getPassword())) {
+            if (student == null || !PasswordUtil.matches(oldPassword, student.getPassword())) {
                 response.put("success", false);
                 response.put("message", "Current password is incorrect.");
                 return response;
             }
-            student.setPassword(passwordEncoder.encode(newPassword));
+            student.setPassword(PasswordUtil.encode(newPassword));
             studentRepository.save(student);
         } else {
             response.put("success", false);
