@@ -2,29 +2,37 @@
 
 ## 📌 Project Overview
 
-The Attendance Management System is a full-stack web application developed to simplify student attendance management for educational institutions. It enables staff to manage attendance records, students to view their attendance details, apply for leave, and receive notifications through a user-friendly interface.
+The Attendance Management System is a full-stack web application developed using **Spring Boot**, **MySQL**, **HTML**, **CSS**, and **JavaScript**. It helps educational institutions automate attendance management by reducing manual work and providing an efficient platform for both students and staff.
 
-The application is built using Spring Boot for the backend, MySQL as the database, and HTML, CSS, and JavaScript for the frontend.
+Students can view their attendance, apply for leave, receive announcements and notifications, while staff can manage student records, mark attendance, review leave requests, and generate attendance reports.
+
+---
+
+## 🎯 Objective
+
+The main objective of this project is to automate attendance management, improve accuracy, reduce paperwork, and provide an easy-to-use system for students and staff.
 
 ---
 
 ## 🚀 Features
 
-### Student
-- Student Registration
+### 👨‍🎓 Student Module
+
 - Student Login
 - View Attendance
+- View Attendance Reports
 - Apply for Leave
 - View Notifications
 - View Announcements
-- Update Profile
+- View Student Profile
 
-### Staff
+### 👨‍🏫 Staff Module
+
 - Staff Login
 - Manage Student Records
-- Mark Attendance
+- Mark Student Attendance
 - View Attendance Reports
-- Manage Leave Applications
+- Approve or Reject Leave Applications
 - Post Announcements
 - Send Notifications
 - View Login Logs
@@ -34,21 +42,26 @@ The application is built using Spring Boot for the backend, MySQL as the databas
 ## 🛠️ Technologies Used
 
 ### Backend
+
 - Java
 - Spring Boot
 - Spring Data JPA
 - Maven
 
 ### Frontend
+
 - HTML5
 - CSS3
 - JavaScript
 
 ### Database
+
 - MySQL
 
 ### Tools
+
 - IntelliJ IDEA
+- MySQL Workbench
 - Postman
 - Git
 - GitHub
@@ -63,8 +76,8 @@ AttendanceManagementSystem
 │   ├── main
 │   │   ├── java
 │   │   │   ├── controller
-│   │   │   ├── model
 │   │   │   ├── repository
+│   │   │   ├── model
 │   │   │   └── AttendanceManagementSystemApplication.java
 │   │   └── resources
 │   │       ├── static
@@ -75,48 +88,58 @@ AttendanceManagementSystem
 
 ---
 
-## 📷 Application Screens
+## 📸 Application Screens
 
 - Home Page
 - Student Login
 - Staff Login
 - Student Dashboard
-- Attendance Page
+- Staff Dashboard
+- Attendance Management
+- Student Management
 - Leave Management
 - Notifications
 - Reports
 
-*(Add screenshots here)*
+> *(Screenshots can be added here.)*
 
 ---
 
-## ⚙️ Installation
+## ⚙️ Installation Guide
 
-### 1. Clone Repository
+### 1️⃣ Clone the Repository
 
 ```bash
-git clone https://github.com/kaviyadharmaraj6369/AttendanceManagementPortal.git
+git clone https://github.com/Kaviyadharmaraj6369/AttendanceManagementSystem.git
 ```
 
-### 2. Open in IntelliJ IDEA
+### 2️⃣ Open the Project
 
-Import the project as a Maven project.
+Open the project using **IntelliJ IDEA**.
 
-### 3. Configure MySQL
+### 3️⃣ Configure MySQL
 
-Create a database:
+Create a database.
 
 ```sql
-CREATE DATABASE attendance_management;
+CREATE DATABASE attendance_db;
 ```
 
-Update the database configuration in:
+Update the database details in:
 
 ```
 src/main/resources/application.properties
 ```
 
-### 4. Run the Application
+Example:
+
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/attendance_db
+spring.datasource.username=root
+spring.datasource.password=your_password
+```
+
+### 4️⃣ Run the Application
 
 Run:
 
@@ -124,7 +147,7 @@ Run:
 AttendanceManagementSystemApplication.java
 ```
 
-Open the application in your browser:
+### 5️⃣ Open the Application
 
 ```
 http://localhost:8080
@@ -134,12 +157,13 @@ http://localhost:8080
 
 ## 🌟 Future Enhancements
 
-- QR Code Attendance
+- QR Code Based Attendance
 - Face Recognition Attendance
 - Email Notifications
 - Attendance Analytics Dashboard
 - Mobile Application
 - Parent Portal
+- Export Reports (PDF & Excel)
 
 ---
 
@@ -147,11 +171,10 @@ http://localhost:8080
 
 **Kaviya D**
 
-GitHub:  
-https://github.com/kaviyadharmaraj6369
+- GitHub: https://github.com/Kaviyadharmaraj6369
 
 ---
 
 ## ⭐ Support
 
-If you like this project, please give this repository a ⭐ on GitHub.
+If you found this project useful, please consider giving this repository a ⭐ on GitHub.
