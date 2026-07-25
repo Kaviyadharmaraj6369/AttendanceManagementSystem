@@ -71,6 +71,7 @@
         .btn-primary { background: #11998e; color: white; }
         .btn-primary:hover { background: #0d7a70; }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 <nav class="navbar">
@@ -120,8 +121,8 @@
         </div>
     </div>
     <div class="card">
-        <h3> Recent Attendance Records</h3>
-        <button onclick="window.print()" class="btn btn-primary" style="margin-bottom: 15px;">📥 Download Report</button>
+        <h3>📋 Recent Attendance Records</h3>
+        <button onclick="downloadPDF()" class="btn btn-primary" style="margin-bottom: 15px;">📥 Download Report (PDF)</button>
         <table>
             <thead>
             <tr>
@@ -139,17 +140,24 @@
     </div>
 </div>
 <script>
+    let studentName = '';
+    let statsSnapshot = {};
+    let attendanceSnapshot = [];
+
     fetch('/api/check-session')
         .then(res => res.json())
         .then(data => {
             if (!data.loggedIn || data.role !== 'student') {
                 window.location.href = '/student-login';
+                return;
             }
+            studentName = data.name || '';
         });
 
     fetch('/api/student/dashboard-stats')
         .then(res => res.json())
         .then(stats => {
+            statsSnapshot = stats;
             document.getElementById('totalClasses').textContent = stats.totalClasses ?? 0;
             document.getElementById('present').textContent = stats.present ?? 0;
             document.getElementById('absent').textContent = stats.absent ?? 0;
@@ -169,6 +177,7 @@
     fetch('/api/attendance/my')
         .then(res => res.json())
         .then(attendances => {
+            attendanceSnapshot = attendances;
             const tbody = document.getElementById('attendanceTable');
             if (!attendances.length) {
                 tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#999;">No attendance records yet.</td></tr>';
@@ -184,6 +193,70 @@
                 </tr>
             `).join('');
         });
+
+    function downloadPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const pageWidth = doc.internal.pageSize.getWidth();
+
+        // Header
+        doc.setFillColor(17, 153, 142);
+        doc.rect(0, 0, pageWidth, 28, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(18);
+        doc.setFont(undefined, 'bold');
+        doc.text('Attendance Report', 14, 18);
+
+        // Student info
+        doc.setTextColor(40, 40, 40);
+        doc.setFontSize(11);
+        doc.setFont(undefined, 'normal');
+        let y = 40;
+        doc.text(`Student: ${studentName || '-'}`, 14, y);
+        doc.text(`Generated: ${new Date().toLocaleString()}`, 14, y + 7);
+
+        // Stats summary
+        y += 20;
+        doc.setFont(undefined, 'bold');
+        doc.text('Summary', 14, y);
+        doc.setFont(undefined, 'normal');
+        y += 8;
+        const summaryLine = `Total Classes: ${statsSnapshot.totalClasses ?? 0}   |   Present: ${statsSnapshot.present ?? 0}   |   Absent: ${statsSnapshot.absent ?? 0}   |   Late: ${statsSnapshot.late ?? 0}   |   Attendance: ${statsSnapshot.attendancePercentage ?? 0}%`;
+        doc.text(summaryLine, 14, y);
+
+        // Table header
+        y += 15;
+        doc.setFont(undefined, 'bold');
+        doc.setFillColor(240, 240, 250);
+        doc.rect(14, y - 6, pageWidth - 28, 9, 'F');
+        doc.text('Date', 16, y);
+        doc.text('Subject', 55, y);
+        doc.text('Status', 95, y);
+        doc.text('Remarks', 130, y);
+        doc.text('Posted By', 170, y);
+        doc.setFont(undefined, 'normal');
+        y += 10;
+
+        if (!attendanceSnapshot.length) {
+            doc.text('No attendance records yet.', 14, y);
+        } else {
+            attendanceSnapshot.forEach(a => {
+                if (y > 280) {
+                    doc.addPage();
+                    y = 20;
+                }
+                doc.text(String(a.date || ''), 16, y);
+                doc.text(String(a.subject || ''), 55, y);
+                doc.text(String(a.status || ''), 95, y);
+                doc.text(String(a.remarks || ''), 130, y);
+                doc.text(String(a.postedBy || ''), 170, y);
+                y += 8;
+            });
+        }
+
+        const fileNameSafe = (studentName || 'student').replace(/[^a-z0-9]+/gi, '_').toLowerCase();
+        doc.save(`attendance_report_${fileNameSafe}.pdf`);
+    }
 </script>
 </body>
 </html>
