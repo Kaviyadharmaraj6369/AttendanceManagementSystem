@@ -132,19 +132,19 @@ AttendanceManagementSystem
 
 ## 📝 Leave Management
 
-![Leave](screenshots/leave-management.png)
+![Leave](screenshots/Leave.png)
 
 ---
 
 ## 🔔 Notifications
 
-![Notifications](screenshots/notifications.png)
+![Notifications](screenshots/Notifications.png)
 
 ---
 
 ## 👤 Student Profile
 
-![Profile](screenshots/profile.png)
+![Profile](screenshots/Profile.png)
 
 # ⚙ Installation
 
