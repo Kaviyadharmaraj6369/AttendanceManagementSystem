@@ -1,45 +1,58 @@
 # 📚 Attendance Management System
 
-## 📌 Project Overview
-
-The Attendance Management System is a full-stack web application developed using **Spring Boot**, **MySQL**, **HTML**, **CSS**, and **JavaScript**. It helps educational institutions automate attendance management by reducing manual work and providing an efficient platform for both students and staff.
-
-Students can view their attendance, apply for leave, receive announcements and notifications, while staff can manage student records, mark attendance, review leave requests, and generate attendance reports.
-
----
-
-## 🎯 Objective
-
-The main objective of this project is to automate attendance management, improve accuracy, reduce paperwork, and provide an easy-to-use system for students and staff.
+![Java](https://img.shields.io/badge/Java-17-orange)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-Framework-brightgreen)
+![MySQL](https://img.shields.io/badge/MySQL-Database-blue)
+![HTML](https://img.shields.io/badge/HTML5-Frontend-red)
+![CSS](https://img.shields.io/badge/CSS3-Style-blue)
+![JavaScript](https://img.shields.io/badge/JavaScript-ES6-yellow)
 
 ---
 
-## 🚀 Features
+# 📌 Project Overview
 
-### 👨‍🎓 Student Module
+Attendance Management System is a full-stack web application developed using **Spring Boot**, **MySQL**, **HTML**, **CSS**, and **JavaScript**.
+
+The system reduces manual attendance work by allowing students and staff to manage attendance online.
+
+---
+
+# 🎯 Objective
+
+- Reduce manual attendance process
+- Improve accuracy
+- Easy attendance tracking
+- Leave Management
+- Student & Staff Portal
+
+---
+
+# 🚀 Features
+
+## 👨‍🎓 Student
 
 - Student Login
 - View Attendance
-- View Attendance Reports
-- Apply for Leave
-- View Notifications
-- View Announcements
-- View Student Profile
+- Attendance Report
+- Leave Application
+- Notifications
+- Announcements
+- Student Profile
 
-### 👨‍🏫 Staff Module
+## 👨‍🏫 Staff
 
 - Staff Login
-- Manage Student Records
-- Mark Student Attendance
-- View Attendance Reports
-- Approve or Reject Leave Applications
-- Post Announcements
-- Send Notifications
-- View Login Logs
+- Student Management
+- Attendance Management
+- Leave Approval
+- Attendance Reports
+- Notifications
+- Announcements
+- Login Logs
 
 ---
 
-## 🛠️ Technologies Used
+# 🛠 Technologies
 
 ### Backend
 
@@ -61,77 +74,101 @@ The main objective of this project is to automate attendance management, improve
 ### Tools
 
 - IntelliJ IDEA
-- MySQL Workbench
 - Postman
 - Git
 - GitHub
 
 ---
 
-## 📂 Project Structure
+# 📂 Project Structure
 
-```
+```text
 AttendanceManagementSystem
 │── src
-│   ├── main
-│   │   ├── java
-│   │   │   ├── controller
-│   │   │   ├── repository
-│   │   │   ├── model
-│   │   │   └── AttendanceManagementSystemApplication.java
-│   │   └── resources
-│   │       ├── static
-│   │       └── application.properties
+│── screenshots
 │── pom.xml
 │── README.md
 ```
 
 ---
 
-## 📸 Application Screens
+# 📸 Screenshots
 
-- Home Page
-- Student Login
-- Staff Login
-- Student Dashboard
-- Staff Dashboard
-- Attendance Management
-- Student Management
-- Leave Management
-- Notifications
-- Reports
+## 🏠 Home Page
 
-> *(Screenshots can be added here.)*
+![Home](screenshots/home.png)
 
 ---
 
-## ⚙️ Installation Guide
+## 👨‍🎓 Student Login
 
-### 1️⃣ Clone the Repository
+![Student Login](screenshots/student-login.png)
+
+---
+
+## 👨‍🏫 Staff Login
+
+![Staff Login](screenshots/staff-login.png)
+
+---
+
+## 📊 Student Dashboard
+
+![Student Dashboard](screenshots/student-dashboard.png)
+
+---
+
+## 📊 Staff Dashboard
+
+![Staff Dashboard](screenshots/staff-dashboard.png)
+
+---
+
+## ✅ Attendance Page
+
+![Attendance](screenshots/attendance.png)
+
+---
+
+## 📝 Leave Management
+
+![Leave](screenshots/leave-management.png)
+
+---
+
+## 🔔 Notifications
+
+![Notifications](screenshots/notifications.png)
+
+---
+
+## 👤 Student Profile
+
+![Profile](screenshots/profile.png)
+
+---
+
+# ⚙ Installation
+
+## Clone Repository
 
 ```bash
 git clone https://github.com/Kaviyadharmaraj6369/AttendanceManagementSystem.git
 ```
 
-### 2️⃣ Open the Project
+Open project in IntelliJ IDEA.
 
-Open the project using **IntelliJ IDEA**.
-
-### 3️⃣ Configure MySQL
-
-Create a database.
+Create MySQL Database.
 
 ```sql
 CREATE DATABASE attendance_db;
 ```
 
-Update the database details in:
+Update:
 
 ```
-src/main/resources/application.properties
+application.properties
 ```
-
-Example:
 
 ```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/attendance_db
@@ -139,15 +176,13 @@ spring.datasource.username=root
 spring.datasource.password=your_password
 ```
 
-### 4️⃣ Run the Application
-
 Run:
 
 ```
 AttendanceManagementSystemApplication.java
 ```
 
-### 5️⃣ Open the Application
+Open:
 
 ```
 http://localhost:8080
@@ -155,26 +190,25 @@ http://localhost:8080
 
 ---
 
-## 🌟 Future Enhancements
+# 🌟 Future Enhancements
 
-- QR Code Based Attendance
-- Face Recognition Attendance
-- Email Notifications
-- Attendance Analytics Dashboard
-- Mobile Application
+- QR Attendance
+- Face Recognition
 - Parent Portal
-- Export Reports (PDF & Excel)
+- Mobile App
+- Email Notifications
+- Export PDF
+- Analytics Dashboard
 
 ---
 
-## 👩‍💻 Author
+# 👩‍💻 Author
 
 **Kaviya D**
 
-- GitHub: https://github.com/Kaviyadharmaraj6369
+GitHub:
+https://github.com/Kaviyadharmaraj6369
 
 ---
 
-## ⭐ Support
-
-If you found this project useful, please consider giving this repository a ⭐ on GitHub.
+⭐ If you like this project, give it a Star.
