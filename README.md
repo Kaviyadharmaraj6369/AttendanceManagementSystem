@@ -146,8 +146,6 @@ AttendanceManagementSystem
 
 ![Profile](screenshots/profile.png)
 
----
-
 # ⚙ Installation
 
 ## Clone Repository
