@@ -74,7 +74,6 @@ The system reduces manual attendance work by allowing students and staff to mana
 ### Tools
 
 - IntelliJ IDEA
-- Postman
 - Git
 - GitHub
 
