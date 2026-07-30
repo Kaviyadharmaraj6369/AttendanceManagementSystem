@@ -91,59 +91,65 @@ AttendanceManagementSystem
 
 ---
 
-# 📸 Screenshots
+# 📸 Application Screens
 
-## 🏠 Home Page
-
-![Home](screenshots/home.png)
-
----
-
-## 👨‍🎓 Student Login
-
-![Student Login](screenshots/student-login.png)
-
----
-
-## 👨‍🏫 Staff Login
-
+## 🔐 Staff Login
 ![Staff Login](screenshots/staff-login.png)
 
 ---
 
-## 📊 Student Dashboard
-
-![Student Dashboard](screenshots/student-dashboard.png)
-
----
-
-## 📊 Staff Dashboard
-
+## 👨‍🏫 Staff Dashboard
 ![Staff Dashboard](screenshots/staff-dashboard.png)
 
 ---
 
-## ✅ Attendance Page
-
-![Attendance](screenshots/attendance.png)
-
----
-
-## 📝 Leave Management
-
-![Leave](screenshots/Leave.png)
+## 👤 Staff Profile
+![Staff Profile](screenshots/staff-profile.png)
 
 ---
 
-## 🔔 Notifications
+## 🎓 Student Login
+![Student Login](screenshots/student-login.png)
 
-![Notifications](screenshots/Notifications.png)
+---
+
+## 📚 Student Dashboard
+![Student Dashboard](screenshots/student-dashboard.png)
 
 ---
 
 ## 👤 Student Profile
+![Student Profile](screenshots/student-profile.png)
 
-![Profile](screenshots/Profile.png)
+---
+
+## 📅 Attendance Management
+![Attendance](screenshots/attendance.png)
+
+---
+
+## 📢 Announcements
+![Announcements](screenshots/announcement.png)
+
+---
+
+## 📝 Leave Management
+![Leave Management](screenshots/leave.png)
+
+---
+
+## 🔔 Notifications
+![Notifications](screenshots/notification.png)
+
+---
+
+## 📊 Reports
+![Reports](screenshots/report.png)
+
+---
+
+## 👤 Profile
+![Profile](screenshots/profile.png)
 
 # ⚙ Installation
 
