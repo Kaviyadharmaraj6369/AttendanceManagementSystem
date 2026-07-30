@@ -18,7 +18,7 @@ public class StudentController {
     @Autowired
     private AttendanceRepository attendanceRepository;
 
-    // ---------- Page routes (just serve the static shell; data is loaded by JS via the /api endpoints below) ----------
+
 
     @GetMapping("/student-dashboard")
     public String studentDashboard(HttpSession session) {
@@ -36,7 +36,7 @@ public class StudentController {
         return "forward:/student-profile.html";
     }
 
-    // ---------- JSON APIs consumed by the pages above ----------
+
 
     @GetMapping("/api/student/dashboard-stats")
     @ResponseBody
@@ -74,7 +74,7 @@ public class StudentController {
         return attendanceRepository.findByStudentUsername(username);
     }
 
-    // ---------- Staff-only student management ----------
+
 
     @GetMapping("/api/students")
     @ResponseBody

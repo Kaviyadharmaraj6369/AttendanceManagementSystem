@@ -15,7 +15,7 @@ public class LeaveApplication {
     private String reason;
     private LocalDate fromDate;
     private LocalDate toDate;
-    private String status; // Pending, Approved, Rejected
+    private String status;
     private LocalDate appliedDate;
     private String staffResponse;
 

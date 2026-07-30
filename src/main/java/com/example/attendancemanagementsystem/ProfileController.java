@@ -16,7 +16,7 @@ public class ProfileController {
     @Autowired
     private StudentRepository studentRepository;
 
-    // ---------- Page ----------
+
 
     @GetMapping("/profile")
     public String profilePage(HttpSession session) {
@@ -26,7 +26,7 @@ public class ProfileController {
         return "forward:/profile.html";
     }
 
-    // ---------- Combined JSON profile (staff or student) ----------
+
 
     @GetMapping("/api/profile")
     @ResponseBody

@@ -53,7 +53,7 @@ public class AnnouncementController {
         announcement.setPostedDate(LocalDateTime.now());
         announcementRepository.save(announcement);
 
-        // Notify every student about the new announcement
+
         List<Student> students = studentRepository.findAll();
         for (Student student : students) {
             Notification notification = new Notification();

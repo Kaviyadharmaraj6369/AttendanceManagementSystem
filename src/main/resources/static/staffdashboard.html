@@ -8,7 +8,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; }
         .navbar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #8b93d6 0%, #a89bc4 100%);
             color: white;
             padding: 15px 30px;
             display: flex;
@@ -47,11 +47,11 @@
             padding: 25px;
             border-radius: 12px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #8b93d6;
             transition: transform 0.3s;
         }
         .stat-card:hover { transform: translateY(-5px); }
-        .stat-card.green { border-left-color: #27ae60; }
+        .stat-card.green { border-left-color: #5fa89e; }
         .stat-card.red { border-left-color: #e74c3c; }
         .stat-card .icon { font-size: 2em; margin-bottom: 10px; }
         .stat-card .stat-value { font-size: 2em; font-weight: 700; color: #2c3e50; }
@@ -72,18 +72,19 @@
         }
         .action-btn:hover { transform: translateY(-3px); }
         .action-btn .icon { font-size: 2em; margin-bottom: 10px; display: block; }
-        .action-btn.blue { background: linear-gradient(135deg, #667eea, #764ba2); }
-        .action-btn.green { background: linear-gradient(135deg, #11998e, #38ef7d); }
-        .action-btn.orange { background: linear-gradient(135deg, #f093fb, #f5576c); }
-        .action-btn.purple { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+        .action-btn.blue { background: linear-gradient(135deg, #8b93d6, #a89bc4); }
+        .action-btn.green { background: linear-gradient(135deg, #5fa89e, #8ecb9e); }
+        .action-btn.orange { background: linear-gradient(135deg, #8b93d6, #a89bc4); }
+        .action-btn.purple { background: linear-gradient(135deg, #5fa89e, #8ecb9e); }
         @media (max-width: 768px) {
             .nav-links { flex-wrap: wrap; }
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 <nav class="navbar">
-    <h2> AMS - Staff Dashboard</h2>
+    <h2>📋 AMS - Staff Dashboard</h2>
     <div class="nav-links">
         <a href="/dashboard">🏠 Dashboard</a>
         <a href="/attendance">✅ Attendance</a>
@@ -104,7 +105,7 @@
     </div>
     <div class="stats-grid">
         <div class="stat-card">
-            <div class="icon" style="color: #667eea;">👥</div>
+            <div class="icon" style="color: #8b93d6;">👥</div>
             <div class="stat-value" id="totalStudents">0</div>
             <div class="stat-label">Total Students</div>
         </div>
@@ -134,9 +135,9 @@
                 <span class="icon">📊</span>
                 View Report
             </a>
-            <a href="/export-attendance" class="action-btn purple">
+            <a href="#" onclick="downloadAttendancePDF(); return false;" class="action-btn purple">
                 <span class="icon">📥</span>
-                Export CSV
+                Export Report (PDF)
             </a>
         </div>
     </div>
@@ -158,6 +159,63 @@
             document.getElementById('presentToday').textContent = data.presentToday || 0;
             document.getElementById('absentToday').textContent = data.absentToday || 0;
         });
+
+    function downloadAttendancePDF() {
+        fetch('/api/attendance/all')
+            .then(res => res.json())
+            .then(attendances => {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                const pageWidth = doc.internal.pageSize.getWidth();
+
+                // Header
+                doc.setFillColor(139, 147, 214);
+                doc.rect(0, 0, pageWidth, 28, 'F');
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(18);
+                doc.setFont(undefined, 'bold');
+                doc.text('Attendance Report', 14, 18);
+
+                doc.setTextColor(40, 40, 40);
+                doc.setFontSize(11);
+                doc.setFont(undefined, 'normal');
+                let y = 40;
+                doc.text(`Generated: ${new Date().toLocaleString()}`, 14, y);
+                doc.text(`Total Records: ${attendances.length}`, 14, y + 7);
+
+                // Table header
+                y += 22;
+                doc.setFont(undefined, 'bold');
+                doc.setFillColor(240, 240, 250);
+                doc.rect(14, y - 6, pageWidth - 28, 9, 'F');
+                doc.text('Student', 16, y);
+                doc.text('Date', 65, y);
+                doc.text('Status', 95, y);
+                doc.text('Subject', 125, y);
+                doc.text('Posted By', 160, y);
+                doc.setFont(undefined, 'normal');
+                y += 10;
+
+                if (!attendances.length) {
+                    doc.text('No attendance records yet.', 14, y);
+                } else {
+                    attendances.forEach(a => {
+                        if (y > 280) {
+                            doc.addPage();
+                            y = 20;
+                        }
+                        doc.text(String(a.studentName || ''), 16, y);
+                        doc.text(String(a.date || ''), 65, y);
+                        doc.text(String(a.status || ''), 95, y);
+                        doc.text(String(a.subject || ''), 125, y);
+                        doc.text(String(a.postedBy || ''), 160, y);
+                        y += 8;
+                    });
+                }
+
+                doc.save('attendance_report.pdf');
+            });
+    }
 </script>
 </body>
 </html>

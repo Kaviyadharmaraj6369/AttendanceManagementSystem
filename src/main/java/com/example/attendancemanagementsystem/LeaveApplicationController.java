@@ -17,7 +17,6 @@ public class LeaveApplicationController {
     @Autowired
     private NotificationRepository notificationRepository;
 
-    // ---------- Pages ----------
 
     @GetMapping("/apply-leave")
     public String applyLeavePage(HttpSession session) {

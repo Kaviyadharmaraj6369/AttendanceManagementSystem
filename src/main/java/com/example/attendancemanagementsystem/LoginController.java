@@ -119,6 +119,7 @@ public class LoginController {
                                 @RequestParam String password,
                                 @RequestParam String name,
                                 @RequestParam String email,
+                                @RequestParam(required = false) String phone,
                                 @RequestParam String department) {
         try {
             if (staffRepository.findByUsername(username).isPresent()) {
@@ -130,6 +131,7 @@ public class LoginController {
             staff.setPassword(PasswordUtil.encode(password));
             staff.setName(name);
             staff.setEmail(email);
+            staff.setPhone(phone);
             staff.setDepartment(department);
             staffRepository.save(staff);
 
@@ -145,6 +147,7 @@ public class LoginController {
                                   @RequestParam String password,
                                   @RequestParam String name,
                                   @RequestParam String email,
+                                  @RequestParam(required = false) String phone,
                                   @RequestParam String department,
                                   @RequestParam String year,
                                   @RequestParam String section) {
@@ -158,6 +161,7 @@ public class LoginController {
             student.setPassword(PasswordUtil.encode(password));
             student.setName(name);
             student.setEmail(email);
+            student.setPhone(phone);
             student.setDepartment(department);
             student.setYear(year);
             student.setSection(section);

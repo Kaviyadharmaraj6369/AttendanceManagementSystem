@@ -5,11 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Attendance Report</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .filter-bar {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            background: white;
+            padding: 16px 20px;
+            border-radius: 14px;
+            box-shadow: 0 10px 28px rgba(60,50,120,0.10);
+        }
+        .filter-bar label { font-weight: 600; color: #2d3748; }
+        .filter-bar input[type="date"] {
+            padding: 9px 12px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .summary-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 14px;
+            font-size: 0.82em;
+            font-weight: 700;
+            margin-right: 4px;
+        }
+        .badge-present { background: #dcfce7; color: #15803d; }
+        .badge-absent { background: #fee2e2; color: #b91c1c; }
+        .badge-late { background: #fef3c7; color: #92400e; }
+        .section-title { margin: 30px 0 10px; color: #2d3748; }
+    </style>
 </head>
 <body>
 <div class="dashboard">
     <nav class="navbar">
-        <h2> AMS - Attendance Report</h2>
+        <h2>📊 AMS - Attendance Report</h2>
         <div class="nav-links">
             <a href="/dashboard">Dashboard</a>
             <a href="/attendance">Mark Attendance</a>
@@ -25,7 +57,34 @@
     </nav>
     <div class="content">
         <h1>Attendance Report</h1>
-        <button onclick="window.print()" class="btn btn-staff">🖨️ Print / Download Report</button>
+
+        <div class="filter-bar">
+            <label>📅 Daily Report for:</label>
+            <input type="date" id="dateFilter">
+            <button class="btn btn-staff" onclick="applyDateFilter()">View Day</button>
+            <button class="btn" style="background:#e2e8f0;color:#333;" onclick="clearDateFilter()">Show All Records</button>
+            <button onclick="window.print()" class="btn btn-staff" style="margin-left:auto;">🖨️ Print / Download</button>
+        </div>
+
+        <div id="dailySummarySection" style="display:none;">
+            <h2 class="section-title">📋 Daily Summary — <span id="summaryDateLabel"></span></h2>
+            <table>
+                <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Username</th>
+                    <th>Periods Marked</th>
+                    <th>Present</th>
+                    <th>Absent</th>
+                    <th>Late</th>
+                    <th>Day Status</th>
+                </tr>
+                </thead>
+                <tbody id="summaryTableBody"></tbody>
+            </table>
+        </div>
+
+        <h2 class="section-title" id="detailTitle">All Attendance Records</h2>
         <table>
             <thead>
             <tr>
@@ -60,27 +119,94 @@
         return 'status-late';
     }
 
+    let allAttendances = [];
+
     fetch('/api/attendance/all')
         .then(res => res.json())
         .then(attendances => {
-            const tbody = document.getElementById('reportTableBody');
-            if (!attendances.length) {
-                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#999;">No attendance records yet.</td></tr>';
-                return;
-            }
-            tbody.innerHTML = attendances.map(a => `
-                <tr>
-                    <td>${a.id}</td>
-                    <td>${a.studentName || ''}</td>
-                    <td>${a.studentUsername || ''}</td>
-                    <td>${a.date}</td>
-                    <td><span class="${statusClass(a.status)}">${a.status}</span></td>
-                    <td>${a.subject || ''}</td>
-                    <td>${a.remarks || ''}</td>
-                    <td>${a.postedBy || ''}</td>
-                </tr>
-            `).join('');
+            allAttendances = attendances;
+            renderDetailTable(attendances);
         });
+
+    function renderDetailTable(attendances) {
+        const tbody = document.getElementById('reportTableBody');
+        if (!attendances.length) {
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#999;">No attendance records found.</td></tr>';
+            return;
+        }
+        tbody.innerHTML = attendances.map(a => `
+            <tr>
+                <td>${a.id}</td>
+                <td>${a.studentName || ''}</td>
+                <td>${a.studentUsername || ''}</td>
+                <td>${a.date}</td>
+                <td><span class="${statusClass(a.status)}">${a.status}</span></td>
+                <td>${a.subject || ''}</td>
+                <td>${a.remarks || ''}</td>
+                <td>${a.postedBy || ''}</td>
+            </tr>
+        `).join('');
+    }
+
+    function renderDailySummary(dayRecords) {
+        const byStudent = {};
+        dayRecords.forEach(a => {
+            const key = a.studentUsername || a.studentName;
+            if (!byStudent[key]) {
+                byStudent[key] = { name: a.studentName, username: a.studentUsername, present: 0, absent: 0, late: 0, total: 0 };
+            }
+            byStudent[key].total++;
+            if (a.status === 'Present') byStudent[key].present++;
+            else if (a.status === 'Absent') byStudent[key].absent++;
+            else if (a.status === 'Late') byStudent[key].late++;
+        });
+
+        const tbody = document.getElementById('summaryTableBody');
+        const rows = Object.values(byStudent);
+        if (!rows.length) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#999;">No attendance marked for this day.</td></tr>';
+            return;
+        }
+        tbody.innerHTML = rows.map(r => {
+            let dayStatus = '';
+            if (r.absent === 0 && r.late === 0) dayStatus = '<span class="summary-badge badge-present">Full Present</span>';
+            else if (r.present === 0) dayStatus = '<span class="summary-badge badge-absent">Fully Absent</span>';
+            else dayStatus = '<span class="summary-badge badge-late">Partial</span>';
+
+            return `
+                <tr>
+                    <td>${r.name || ''}</td>
+                    <td>${r.username || ''}</td>
+                    <td>${r.total}</td>
+                    <td>${r.present}</td>
+                    <td>${r.absent}</td>
+                    <td>${r.late}</td>
+                    <td>${dayStatus}</td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function applyDateFilter() {
+        const date = document.getElementById('dateFilter').value;
+        if (!date) {
+            alert('Please pick a date first.');
+            return;
+        }
+        const dayRecords = allAttendances.filter(a => a.date === date);
+        document.getElementById('dailySummarySection').style.display = 'block';
+        document.getElementById('summaryDateLabel').textContent = date;
+        document.getElementById('detailTitle').textContent = 'Attendance Records for ' + date;
+        renderDailySummary(dayRecords);
+        renderDetailTable(dayRecords);
+    }
+
+    function clearDateFilter() {
+        document.getElementById('dateFilter').value = '';
+        document.getElementById('dailySummarySection').style.display = 'none';
+        document.getElementById('detailTitle').textContent = 'All Attendance Records';
+        renderDetailTable(allAttendances);
+    }
 </script>
 </body>
 </html>
